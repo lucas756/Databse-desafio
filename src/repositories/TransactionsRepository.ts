@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { EntityRepository, Repository } from 'typeorm';
 
 import Transaction from '../models/Transaction';
@@ -14,21 +15,14 @@ class TransactionsRepository extends Repository<Transaction> {
     const transactions = await this.find();
 
     const { income, outcome } = transactions.reduce(
-      (accumulator, transaction) => {
-        switch (transaction.type) {
-          case 'income':
-            accumulator.income += Number(transaction.value);
-            break;
-
-          case 'outcome':
-            accumulator.outcome += Number(transaction.value);
-            break;
-
-          default:
-            break;
+      (increment, transaction) => {
+        if (transaction.type === 'income') {
+          increment.income += Number(transaction.value);
+        } else {
+          increment.outcome += Number(transaction.value);
         }
 
-        return accumulator;
+        return increment;
       },
       {
         income: 0,
@@ -38,7 +32,6 @@ class TransactionsRepository extends Repository<Transaction> {
     );
 
     const total = income - outcome;
-
     return { income, outcome, total };
   }
 }

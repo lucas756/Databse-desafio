@@ -11,12 +11,10 @@ import ImportTransactionsService from '../services/ImportTransactionsService';
 import uploadConfig from '../config/upload';
 
 const upload = multer(uploadConfig);
-
 const transactionsRouter = Router();
 
 transactionsRouter.get('/', async (request, response) => {
   const transactionsRepository = getCustomRepository(TransactionsRepository);
-
   const transactions = await transactionsRepository.find();
   const balance = await transactionsRepository.getBalance();
 
@@ -24,14 +22,14 @@ transactionsRouter.get('/', async (request, response) => {
 });
 
 transactionsRouter.post('/', async (request, response) => {
-  const { title, value, type, category } = request.body;
+  const { title, type, value, category } = request.body;
 
   const createTransaction = new CreateTransactionService();
 
   const transaction = await createTransaction.execute({
     title,
-    value,
     type,
+    value,
     category,
   });
 
